@@ -1,0 +1,30 @@
+{
+    "name": "fastgifencoder",
+    "version": "1.0.0",
+    "description": "An extremely fast zero dependency GIF encoder in under 1k lines of vanilla JS.",
+    "main": "index.js",
+    "type": "module",
+    "exports": {
+        ".": "./index.js"
+    },
+    "files": [
+        "index.js"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/jerick120/FastGifEncoder.git"
+    },
+    "keywords": [
+        "gif",
+        "fast",
+        "encoder",
+        "image",
+        "node",
+        "lzw compression"
+    ],
+    "author": {
+        "name": "jerick120",
+        "url": "https://github.com/jerick120"
+    },
+    "license": "MIT"
+}
