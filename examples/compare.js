@@ -17,10 +17,10 @@ export const compare = {
 		fastgifencoder: async (imageData, width, height, delay) => {
 			await new Promise(res => {
 				const encoder = new FastGifEncoder({width, height});
+				const start = performance.now();
 				for (const data of imageData) {
 					encoder.addFrame(data, {delay});
 				}
-				const start = performance.now();
 				const bytes = encoder.encode();
 				const end = performance.now();
 				logTime(start, end);

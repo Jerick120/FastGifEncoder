@@ -42,18 +42,18 @@ Encoding a `250` frame `60MB` GIF on a single thread.
 
 |     Encoder      | Time (ms) |
 |:----------------:|:---------:|
-| `FastGifEncoder` |   16.86   | 
-| `gif-encoder-2`  | 25981.85  |
-|   `modern-gif`   | 27000.38  |
-| `@skyra/gifenc`  | 16191.04  |
-|     `gifenc`     |  3765.17  |
+| `FastGifEncoder` |  2870.05  | 
+| `gif-encoder-2`  | 23705.25  |
+|   `modern-gif`   | 24188.74  |
+| `@skyra/gifenc`  | 16022.36  |
+|     `gifenc`     |  4047.88  |
 
 ### Speed optimization `off`
 
 |     Encoder      | Time (ms) |
 |:----------------:|:---------:|
-| `FastGifEncoder` |   30.59   | 
-| `gif-encoder-2`  | 44828.40  |
-|   `modern-gif`   | 49962.91  |
-| `@skyra/gifenc`  | 35294.82  |
-|     `gifenc`     |  9307.53  |
+| `FastGifEncoder` |  5459.03  | 
+| `gif-encoder-2`  | 44684.97  |
+|   `modern-gif`   | 47098.18  |
+| `@skyra/gifenc`  | 30597.54  |
+|     `gifenc`     | 6544.22¬  |
