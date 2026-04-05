@@ -2,10 +2,10 @@ import fs from 'fs';
 import {performance} from 'perf_hooks';
 
 import {FastGifEncoder} from '../src/index.js';
-import GIFEncoder from 'gif-encoder';
 import GifEncoder2 from 'gif-encoder-2';
 import {encode as moderngif} from 'modern-gif';
-import {GifEncoder as gifenc} from '@skyra/gifenc';
+import {GifEncoder as skyragifenc} from '@skyra/gifenc';
+import {GIFEncoder as gifenc, quantize, applyPalette} from 'gifenc';
 
 const logTime = (start, end) => console.log(`✅ Encoded in: ${(end - start).toFixed(2)}ms\n`);
 
@@ -14,14 +14,11 @@ if (fs.existsSync(outDir)) fs.rmSync(outDir, {recursive: true});
 fs.mkdirSync(outDir);
 
 export const compare = {
-		fastgifencoder: async (frames, ctx, width, height, delay) => {
+		fastgifencoder: async (imageData, width, height, delay) => {
 			await new Promise(res => {
 				const encoder = new FastGifEncoder({width, height});
-				for (const fr of frames) {
-					ctx.clearRect(0, 0, width, height);
-					ctx.drawImage(fr, 0, 0, width, height);
-					const img = ctx.getImageData(0, 0, width, height);
-					encoder.addFrame(img.data, {delay});
+				for (const data of imageData) {
+					encoder.addFrame(data, {delay});
 				}
 				const start = performance.now();
 				const bytes = encoder.encode();
@@ -31,39 +28,7 @@ export const compare = {
 				res();
 			});
 		},
-		'gif-encoder': async (frames, ctx, width, height, delay) => {
-			await new Promise(res => {
-				const encoder = new GIFEncoder(width, height);
-				encoder.setQuality(20);
-				encoder.setDelay(delay);
-
-				const file = fs.createWriteStream(`${outDir}/gifencoder-cat.gif`);
-				encoder.pipe(file);
-
-				let start;
-				encoder.on('data', () => {
-					start ||= performance.now();
-				});
-				encoder.on('end', () => {
-					const end = performance.now();
-					logTime(start, end);
-					res();
-				});
-				encoder.on('readable', () => {
-					encoder.read();
-				});
-
-				encoder.writeHeader();
-				for (const fr of frames) {
-					ctx.clearRect(0, 0, width, height);
-					ctx.drawImage(fr, 0, 0, width, height);
-					const img = ctx.getImageData(0, 0, width, height);
-					encoder.addFrame(img.data);
-				}
-				encoder.finish();
-			});
-		},
-		'gif-encoder-2': async (frames, ctx, width, height, delay) => {
+		'gif-encoder-2': async (imageData, width, height, delay) => {
 			await new Promise(res => {
 				const encoder = new GifEncoder2(width, height);
 				encoder.setQuality(20);
@@ -71,15 +36,11 @@ export const compare = {
 
 				const start = performance.now();
 				encoder.start();
-
-				for (const fr of frames) {
-					ctx.clearRect(0, 0, width, height);
-					ctx.drawImage(fr, 0, 0, width, height);
-					const img = ctx.getImageData(0, 0, width, height);
-					encoder.addFrame(img.data);
+				for (const data of imageData) {
+					encoder.addFrame(data);
 				}
-
 				encoder.finish();
+
 				const buffer = encoder.out.getData();
 				const end = performance.now();
 				logTime(start, end);
@@ -87,14 +48,11 @@ export const compare = {
 				res();
 			});
 		},
-		'modern-gif': async (frames, ctx, width, height, delay) => {
+		'modern-gif': async (imageData, width, height, delay) => {
 			await new Promise(async (res) => {
 				const frameData = [];
-				for (const fr of frames) {
-					ctx.clearRect(0, 0, width, height);
-					ctx.drawImage(fr, 0, 0, width, height);
-					const img = ctx.getImageData(0, 0, width, height);
-					frameData.push({data: img.data.buffer, delay});
+				for (const data of imageData) {
+					frameData.push({data: data.buffer, delay});
 				}
 				const start = performance.now();
 				const out = await moderngif({width, height, frames: frameData});
@@ -104,14 +62,14 @@ export const compare = {
 				res();
 			});
 		},
-		'@skyra/gifenc': async (frames, ctx, width, height, delay) => {
+		'@skyra/gifenc': async (imageData, width, height, delay) => {
 			await new Promise(res => {
-				const encoder = new gifenc(width, height);
+				const encoder = new skyragifenc(width, height);
 				encoder.setQuality(20);
 				encoder.setDelay(delay);
 
 				const stream = encoder.createReadStream();
-				stream.pipe(fs.createWriteStream(`${outDir}/gifenc-cat.gif`));
+				stream.pipe(fs.createWriteStream(`${outDir}/skyragifenc-cat.gif`));
 
 				stream.on('end', () => {
 					const end = performance.now();
@@ -121,14 +79,29 @@ export const compare = {
 
 				const start = performance.now();
 				encoder.start();
-				for (const fr of frames) {
-					ctx.clearRect(0, 0, width, height);
-					ctx.drawImage(fr, 0, 0, width, height);
-					const img = ctx.getImageData(0, 0, width, height);
-					encoder.addFrame(img.data);
+				for (const data of imageData) {
+					encoder.addFrame(data);
 				}
 				encoder.finish();
 			});
-		}
+		},
+		'mattdesl/gifenc': async (imageData, width, height, delay) => {
+			await new Promise(res => {
+				const encoder = new gifenc();
+
+				const start = performance.now();
+				for (const data of imageData) {
+					const palette = quantize(data, 256);
+					const index = applyPalette(data, palette);
+					encoder.writeFrame(index, width, height, {palette, delay});
+				}
+				encoder.finish();
+				const out = encoder.bytes();
+				const end = performance.now();
+				logTime(start, end);
+				fs.writeFileSync(`${outDir}/gifenc-cat.gif`, out);
+				res();
+			});
+		},
 	}
 ;

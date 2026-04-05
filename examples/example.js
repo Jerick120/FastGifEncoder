@@ -11,6 +11,7 @@ const encodeGif = async (arr, optimizeSpeed = true) => {
 	const width = 800;
 	const height = 450;
 	const frameDelay = 20;
+	const imageData = [];
 
 	const payload = {frames: arr, delay: frameDelay};
 	const {frames, delay} = optimizeSpeed ? applySpeedOptimization(payload) : payload;
@@ -18,9 +19,16 @@ const encodeGif = async (arr, optimizeSpeed = true) => {
 	const canvas = createCanvas(width, height);
 	const ctx = canvas.getContext('2d');
 
+	for (const fr of frames) {
+		ctx.clearRect(0, 0, width, height);
+		ctx.drawImage(fr, 0, 0, width, height);
+		const img = ctx.getImageData(0, 0, width, height);
+		imageData.push(img.data);
+	}
+	console.log(`📊 Speed Optimization: ${optimizeSpeed ? 'On' : 'Off'}\n`);
 	for (const encoder in compare) {
 		console.log(`⏳ Running ${encoder}`);
-		await compare[encoder](frames, ctx, width, height, delay);
+		await compare[encoder](imageData, width, height, delay);
 	}
 };
 
