@@ -1,6 +1,6 @@
 {
   "name": "fastgifencoder",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "An extremely fast zero dependency GIF encoder in under 1k lines of vanilla JS.",
   "type": "module",
   "main": "./dist/index.js",
