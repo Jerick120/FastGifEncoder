@@ -14,7 +14,7 @@
     "discord"
   ],
   "scripts": {
-    "build": "cp -r src dist",
+    "build": "rm -rf -r dist && cp -r src dist",
     "prepublishOnly": "npm run build"
   },
   "files": [
@@ -33,8 +33,8 @@
   "devDependencies": {
     "@skyra/gifenc": "^1.0.1",
     "canvas": "^3.2.3",
-    "gif-encoder": "^0.7.2",
     "gif-encoder-2": "^1.0.5",
+    "gifenc": "github:mattdesl/gifenc",
     "modern-gif": "^2.0.4"
   }
 }
