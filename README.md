@@ -56,4 +56,4 @@ Encoding a `250` frame `60MB` GIF on a single thread.
 | `gif-encoder-2`  | 44684.97  |
 |   `modern-gif`   | 47098.18  |
 | `@skyra/gifenc`  | 30597.54  |
-|     `gifenc`     | 6544.22¬  |
+|     `gifenc`     |  6544.22  |
