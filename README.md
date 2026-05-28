@@ -2,6 +2,9 @@
 
 An extremely fast zero dependency GIF encoder in under 1k lines of vanilla JS.
 
+- Used by [Zeppelin](https://zeppelin.cat) Discord bot.
+- [Discord Server](https://bothunt.co/join/333749099897683980/466489412885282816)
+
 # Install
 
 `npm install fastgifencoder`
